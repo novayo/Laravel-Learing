@@ -1,5 +1,7 @@
 <?php 
 
+    include('config/db_connect.php'); // 連結資料庫
+
     $errors = [
         'email' => '',
         'title' => '',
@@ -56,8 +58,27 @@
         
         // 如果 errors 為空 => 表單對了
         if (!array_filter($errors)){
-            // Redirect
-            header('Location: index.php');
+            
+            // 去除 操作mysqli的字串
+            $email = mysqli_real_escape_string($conn, $_POST['email']);
+            $title = mysqli_real_escape_string($conn, $_POST['title']);
+            $ingredients = mysqli_real_escape_string($conn, $_POST['ingredients']);
+
+            // define query string
+            // 插入 pizzas_table(內的col) 值是 '變數'
+            // 要加上''，因為要變數內容要轉成字串
+            $query_string = "INSERT INTO pizzas(title,email,ingredients) VALUES('$title', '$email', '$ingredients')";
+
+            // query
+            if (!mysqli_query($conn, $query_string)){
+                // 如果失敗
+                echo 'query error: ' . mysqli_error($conn);
+            } else{
+                // 如果成功
+
+                // Redirect
+                header('Location: index.php');
+            }
         }
          
     } // end of POST check

@@ -1,3 +1,17 @@
+<?php
+    session_start();
+
+    if($_SERVER['QUERY_STRING'] == 'noname'){
+        unset($_SESSION['name']);
+    }
+
+    $name = $_SESSION['name'] ?? 'Guest';
+
+    // get cookie
+    $gender = $_COOKIE['gender'] ?? 'Unknown';
+
+?>
+
 <head>
     <title>Pizza Order System</title>
     <!-- Compiled and minified CSS -->
@@ -16,6 +30,13 @@
             margin: 20px auto;
             padding: 20px;
         }
+        .pizza{
+            width: 100px;
+            margin: 40px auto -30px;
+            display: block;
+            position: relative;
+            top: -30px;
+        }
     </style>
 </head>
 
@@ -30,15 +51,16 @@
 
             <!-- a代表這東西可以按 #代表按了回到本頁 -->
             <!-- brad-logo 是 Materialize的套件（應該是設定字型） -->
-            <a href="#" class="center brand-logo brand-text">Pizza Order</a>
+            <a href="index.php" class="center brand-logo brand-text">Pizza Order</a>
 
             <!-- ul表示 無排序的元素，可以包涵<li> <ol> <ul> -->
             <!-- id 表示 變數名稱，所以這裡的"nav-mobile代表整個包起來的名稱" -->
             <!-- right 表示在右邊， hide-on-small-and-down是 Materialize的套件 -->
             <ul id="nav-mobile" class="right hide-on-small-and-down">
-
+                <li class="grey-text">Hello <?php echo htmlspecialchars($name); ?></li>
+                <li class="grey-text">(<?php echo htmlspecialchars($gender); ?>)</li>
                 <!-- btn為 按鈕 -->
-                <li><a href="#" class="btn brand z-depth-0">Add a Pizza</a></li>
+                <li><a href="add.php" class="btn brand z-depth-0">Add a Pizza</a></li>
             </ul>
         </div>
     
