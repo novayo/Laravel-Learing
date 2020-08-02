@@ -210,3 +210,222 @@ Route::get('/pizza_list/{id}', function($id){
     return view('details', ['id' => $id]);
 });
 ```
+
+## [controller](https://www.youtube.com/watch?v=sysR91VZ9C8&list=PL4cUxeGkcC9hL6aCFKyagrT1RCfVN4w2Q&index=11)
+
+1. 說明
+
+> laravel專有的class，用來定義各種function
+> user有user controller，user會有他自己該有的function
+> 
+
+2. 如何建立
+
+`php artisan make:controller 名`
+> 檔案在 app/Http/Controllers
+> 
+
+3. 如何使用
+
+> 定義好function之後，這些function稱之為==action==
+> 在Route使用時放在第二個參數取代function，並用文字取用對應的controller跟action
+> 用@取用action
+
+```php=
+Route::get('/', 'Controller名@action名');
+```
+
+## [mysql](https://www.youtube.com/watch?v=qCMgxDfRKCo&list=PL4cUxeGkcC9hL6aCFKyagrT1RCfVN4w2Q&index=12)
+
+1. 安裝
+
+* [點我下載](https://dev.mysql.com/downloads/mysql/)
+* 設置環境變數：export PATH=${PATH}:/usr/local/mysql/bin/
+
+2. 步驟
+    
+* 登入：`mysql -u root -p`
+* 創建資料庫：`create database 名;`
+* 在==.env==檔案中，更改DB_DATABASE=名
+
+## [migration](https://www.youtube.com/watch?v=074AQVmvvdg&list=PL4cUxeGkcC9hL6aCFKyagrT1RCfVN4w2Q&index=13)
+
+
+1. 說明
+
+> 用於設定 對mysql的操作
+> up() => 建立table
+> down() => 刪除table
+
+2. 使用
+
+> 在database/migrations內
+* 建立：`php artisan make:migration create_pizzas_table`
+* 更改要的table
+* 插入所有table：`php artisan migrate`
+* 重新插入所有table：`php artisan migrate:fresh`
+
+## [more migration](https://www.youtube.com/watch?v=1Zyr-xi4bPk&list=PL4cUxeGkcC9hL6aCFKyagrT1RCfVN4w2Q&index=14)
+
+1. 增加新的欄位
+
+> 方法一：直接改動對應的檔案
+> 方法二：新增一個migration到對應的db
+> 
+
+2. rollback
+
+> 每個操作都有步驟一、二...等
+> 這些是在 `php artisan migrate:status` 內的batch做區分
+> 而 `php artisan migrate:rollback` 會回到上一個batch
+> 
+
+## [eloquent model](https://www.youtube.com/watch?v=iaXtpAYfiy4&list=PL4cUxeGkcC9hL6aCFKyagrT1RCfVN4w2Q&index=15)
+
+1. 說明
+
+> 簡單來說，控制mysql指令很麻煩，
+> laravel則支援了，用程式碼操作這些指令
+> 
+
+2. 使用
+
+* 建立：`php artisan make:model 名`
+* 檔案在/app下
+* 在要使用到資料庫的地方，寫下 `use App\名`，就可以用這個class了
+
+```php=
+// 回傳所有data
+$data = 名::all();
+
+// 照順序拿(小到大)
+$data = 名::orderBy('name')->get();
+
+// 照順序拿(大到小)
+$data = 名::orderBy('name', 'desc')->get();
+
+// 抓取特定一行資料（抓名字是Eric的訂單）
+$data = 名::where('name', 'Eric');
+
+// 抓取最後一筆資料（看timestamp，若沒有，timestamp=0）
+$data = 名::latest()->get();
+
+// 找尋特定資料 (沒有這個資料會報錯)
+$data = 名::find($id);
+
+// 找尋特定資料 (沒有這個資料會出現404)
+$data = 名::findOrFail($id);
+```
+
+## [view資料夾分類](https://www.youtube.com/watch?v=XygqwWXhcrk&list=PL4cUxeGkcC9hL6aCFKyagrT1RCfVN4w2Q&index=16)
+
+1. 分類好不同的view
+
+> 假設檔案路徑為 /view/pizzas/index.blade.php
+> 取用 `view('pizzas.index')`
+> 
+
+## [拿取資料庫並更新在view內](https://www.youtube.com/watch?v=LkQ7SeLh-DM&list=PL4cUxeGkcC9hL6aCFKyagrT1RCfVN4w2Q&index=17)
+
+1. $data = 名::findOrFail($id);
+
+## [建立表單 & send post request](https://www.youtube.com/watch?v=8KCQ5SV3omQ&list=PL4cUxeGkcC9hL6aCFKyagrT1RCfVN4w2Q&index=18)
+
+> form 但 action指向/pizza_list
+> 雖然 Route::get內已經有這個了，不過這是帶有post的一些資訊回來
+> 再來就要再去定義，當get到這個post之後，controller要做出什麼反應
+> 
+
+## [handle post request](https://www.youtube.com/watch?v=FZusuCbU7_Q&list=PL4cUxeGkcC9hL6aCFKyagrT1RCfVN4w2Q&index=19)
+
+
+1. 抓取這個post
+
+```php=
+// 抓取此post
+Route::post('/pizza_list', 'PizzaController@store');
+
+// 抓到之後去controller的store
+public function store(){
+    // 這邊先回到主頁面
+    return redirect('/');
+}
+```
+
+2. csrf
+
+> 送出表單中，可能會有人去偽造相同的post回去server，這樣就被攻擊了
+> 很多框架都會預防這種攻擊，
+> 所以這邊如果直接redirect，會被laravel擋下來，出現419 error
+> 因此要在form 中加入**@csrf**字樣去預防這個error
+> [更多資料](https://blog.techbridge.cc/2017/02/25/csrf-introduction/)
+> 
+
+3. 抓取post資料
+
+```php=
+$data = request('price'); // 這裡的price是表單的name
+```
+
+## [插入資料進資料庫 & redirect資料給別的頁面](https://www.youtube.com/watch?v=7cdXabzIgkI&list=PL4cUxeGkcC9hL6aCFKyagrT1RCfVN4w2Q&index=20)
+
+1. 插入進資料庫
+
+```php=
+$pizza = new Pizzas(); // model
+$pizza->name = request('name');
+$pizza->type = request('type');
+$pizza->base = request('base');
+
+$pizza->save(); // save into mysql => 應該是繼承model的關係，model好像本先定義要跟mysql互動
+```
+
+2. redirect與送參數給它
+
+```php=
+return redirect('/')->with('message', 'Thanks for ordering'); // with 是 建立一個session = {'message': 'Thanks for ordering'}
+
+// 取用時，在view內用{{ session('key') }}去呼叫即可
+```
+
+## [插入 json 資料](https://www.youtube.com/watch?v=C5g1G6AVdco&list=PL4cUxeGkcC9hL6aCFKyagrT1RCfVN4w2Q&index=21)
+
+1. 說明
+
+> 前面都是傳送單筆資料
+> 有些資料是json形式傳回，而mysql能夠儲存json格式
+> 但是 我們不能直接用json，因此我們可以在model運用**$casts**
+> 來讓我們取用此變數時能夠自動將json轉成array
+> 
+
+```php=
+// 在model中
+
+// 遇到名字是toppings的變數，會自動轉成array格式
+protected $casts = [
+    'toppings' => 'array'
+];
+```
+
+## [刪除一筆資料](https://www.youtube.com/watch?v=CVu25TR_dAk&list=PL4cUxeGkcC9hL6aCFKyagrT1RCfVN4w2Q&index=22)
+
+1. 自行定義 Route::"這裡"
+
+> 雖然在form中的method只有接受get跟post
+> 但我們可以在下面加入@method('名稱')
+> 這樣就可以在laravel中使用`Route::名稱`去抓取
+
+2. controller
+
+```php=
+// 在web.php中
+Route::delete('/pizza_list/{id}', 'PizzaController@delete');
+
+// 在controller中
+public function delete($id){
+    $pizza = Pizzas::findOrFail($id);
+    $pizza->delete();
+
+    return redirect('/pizza_list');
+}
+```

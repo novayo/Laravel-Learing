@@ -18,30 +18,8 @@ Route::get('/', function () {
 });
 
 
-Route::get('/pizza_list', function () {
-    $pizza = [
-        'type' => 'chocolate',
-        'size' => 'venta',
-        'price' => 10,
-        'addition' => 'caramel',
-    ];
-
-    $pizzas = [
-        ['name' => 'Eric', 'type' => 'chocolate', 'size' => 'small', 'price' => 5],
-        ['name' => 'Lisa', 'type' => 'tomato', 'size' => 'grenda', 'price' => 10],
-        ['name' => 'Amanda', 'type' => 'pinapple', 'size' => 'venta', 'price' => 20],
-    ];
-    return view(
-        'pizza_list', 
-        $pizza,
-        [
-        'pizzas' => $pizzas,
-        'name'   => request('name'),
-        'age'    => request('age'),
-        ],
-    );
-});
-
-Route::get('/pizza_list/{id}', function($id){
-    return view('details', ['id' => $id]);
-});
+Route::get('/pizza_list', 'PizzaController@index');
+Route::post('/pizza_list', 'PizzaController@store');
+Route::get('/pizza_list/create', 'PizzaController@create');
+Route::get('/pizza_list/{id}', 'PizzaController@show');
+Route::delete('/pizza_list/{id}', 'PizzaController@delete');
